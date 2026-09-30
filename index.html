@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roma Antiga</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font-family:Arial,sans-serif;background:#eee2cc;color:#30251d}
+:focus-visible{outline:3px solid #9c742d;outline-offset:2px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+#progresso{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,#9c742d,#f3d58a);z-index:20}
+header{background:#651d1d;color:#f3d58a;text-align:center;padding:50px 20px;overflow:hidden;position:relative}
+header h1{font-family:Georgia,serif;font-size:42px;letter-spacing:3px}
+header h1 span{display:inline-block;opacity:0;transform:translateY(30px) rotate(-6deg);animation:letra .7s cubic-bezier(.2,.9,.3,1.3) forwards}
+@keyframes letra{to{opacity:1;transform:none}}
+header p{margin-top:10px;color:#f5ead2;opacity:0;animation:fade 1s 1.3s forwards}
+@keyframes fade{to{opacity:1}}
+header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:#f3d58a;transform:scaleX(0);animation:linha 1.2s 1s forwards}
+@keyframes linha{to{transform:scaleX(1)}}
+nav{background:#2b211c;text-align:center;padding:16px;position:sticky;top:0;z-index:10}
+nav a{color:#f3d58a;text-decoration:none;margin:0 15px;font-weight:bold;padding-bottom:4px;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+nav a:hover{color:#fff}
+nav a.ativo{border-color:#f3d58a}
+main{width:90%;max-width:1000px;margin:30px auto}
+section{background:#fff9ed;padding:30px;margin-bottom:25px;border-radius:10px;border-left:5px solid #9c742d;box-shadow:0 3px 10px #00000020}
+h2{color:#651d1d;font-family:Georgia,serif;margin-bottom:15px}
+p{line-height:1.7}
+.dica{font-size:14px;color:#6b5a48;margin-bottom:12px}
+.introducao{text-align:center;border-left:none;background:#dfc28a}
+.curiosidade{background:#d5b67b}
+.rev{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.rev.vis{opacity:1;transform:none}
+/* linha do tempo */
+.trilho{position:relative;display:flex;justify-content:space-between;margin:10px 0 20px}
+.trilho::before,.trilho i{content:"";position:absolute;top:14px;left:8%;height:4px;border-radius:2px}
+.trilho::before{right:8%;background:#d9c69c}
+.trilho i{background:#651d1d;width:0;transition:width .6s ease}
+.no{position:relative;flex:1;text-align:center;font-weight:bold;color:#6b5a48}
+.no b{display:block;width:32px;height:32px;margin:0 auto 6px;border-radius:50%;background:#f1e2c2;border:4px solid #d9c69c;transition:.3s}
+.no:hover b{transform:scale(1.15)}
+.no[aria-selected=true]{color:#651d1d}
+.no[aria-selected=true] b{background:#651d1d;border-color:#f3d58a;transform:scale(1.25)}
+.painel{background:#f1e2c2;padding:20px;border-radius:8px;min-height:150px}
+.painel h3,.card h3{color:#651d1d;margin-bottom:10px}
+.painel .anos{display:inline-block;background:#651d1d;color:#f3d58a;padding:2px 10px;border-radius:20px;font-size:14px;margin-bottom:10px}
+.painel.troca{animation:entra .5s}
+@keyframes entra{from{opacity:0;transform:translateX(20px)}}
+/* piramide */
+.piramide{display:flex;flex-direction:column;align-items:center;gap:8px;margin:15px 0}
+.grupo{padding:14px;border-radius:8px;font-weight:bold;color:#fff;transition:transform .2s,filter .2s}
+.grupo:nth-child(1){width:40%;background:#651d1d}
+.grupo:nth-child(2){width:70%;background:#9c742d}
+.grupo:nth-child(3){width:100%;background:#4a3a2e}
+.grupo:hover{transform:scale(1.03)}
+.grupo[aria-pressed=true]{filter:brightness(1.25);box-shadow:0 0 0 3px #f3d58a}
+.info{background:#f1e2c2;padding:16px;border-radius:8px;transition:opacity .3s}
+/* cards */
+.cards{display:flex;gap:20px;margin-top:20px}
+.card{flex:1;background:#f1e2c2;padding:20px;border-radius:8px}
+.flip{padding:0;background:none;perspective:900px;text-align:left}
+.flip div{display:grid;transition:transform .7s;transform-style:preserve-3d;height:100%}
+.flip.virado div{transform:rotateY(180deg)}
+.flip section{grid-area:1/1;backface-visibility:hidden;margin:0;background:#f1e2c2;border:0;box-shadow:none;padding:20px}
+.flip .verso{transform:rotateY(180deg);background:#651d1d;color:#f5ead2}
+.flip .verso h3{color:#f3d58a}
+.flip:hover div{filter:brightness(1.05)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{padding:6px 12px;border-radius:20px;background:#fff9ed;border:2px solid #9c742d;transition:.2s}
+.chip:hover{background:#f3d58a}
+.chip[aria-pressed=true]{background:#651d1d;color:#f3d58a;border-color:#651d1d}
+.saida{min-height:60px;font-size:15px}
+/* legado / latim */
+.legado li{list-style:none;margin:8px 0}
+.legado button{width:100%;text-align:left;padding:12px 16px;background:#f1e2c2;border-radius:8px;font-weight:bold;display:flex;justify-content:space-between;transition:background .2s}
+.legado button:hover{background:#e6d2a5}
+.legado button::after{content:"+";transition:transform .3s;color:#651d1d}
+.legado button[aria-expanded=true]::after{transform:rotate(45deg)}
+.legado .txt{max-height:0;overflow:hidden;transition:max-height .4s;padding:0 16px}
+.legado .txt p{padding:10px 0}
+.palavras{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px}
+.lang{background:#fff9ed;border-radius:8px;padding:12px;text-align:center;animation:entra .5s backwards}
+.lang small{display:block;color:#6b5a48}
+.lang strong{font-family:Georgia,serif;font-size:20px;color:#651d1d}
+footer{background:#2b211c;color:#f3d58a;text-align:center;padding:25px;margin-top:40px}
+@media(max-width:700px){.cards{flex-direction:column}nav a{display:block;margin:10px}header h1{font-size:32px}.flip div{min-height:170px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}.rev{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="progresso"></div>
+<header>
+<h1 id="titulo">ROMA ANTIGA</h1>
+<p>História, cultura e legado de uma grande civilização</p>
+</header>
+<nav>
+<a href="#historia">História</a>
+<a href="#sociedade">Sociedade</a>
+<a href="#cultura">Cultura</a>
+<a href="#legado">Legado</a>
+</nav>
+<main>
+<section class="introducao rev">
+<h2>🏛️ Uma das maiores civilizações da História</h2>
+<p>A Roma Antiga surgiu na Península Itálica e, ao longo dos séculos, tornou-se uma das maiores potências do mundo antigo. Sua história passou pela Monarquia, República e Império.</p>
+</section>
+
+<section id="historia" class="rev">
+<h2>📜 História</h2>
+<p class="dica">Clique em um período para percorrer a linha do tempo.</p>
+<div class="trilho" role="tablist" aria-label="Períodos de Roma">
+<i id="preenche"></i>
+<button class="no" role="tab" aria-selected="true" data-i="0"><b></b>Monarquia</button>
+<button class="no" role="tab" aria-selected="false" data-i="1"><b></b>República</button>
+<button class="no" role="tab" aria-selected="false" data-i="2"><b></b>Império</button>
+</div>
+<div class="painel" id="painel" role="tabpanel" aria-live="polite"></div>
+</section>
+
+<section id="sociedade" class="rev">
+<h2>⚔️ Sociedade</h2>
+<p>A sociedade romana possuía diferentes grupos. Entre eles estavam os patrícios, os plebeus e as pessoas escravizadas. A posição social influenciava os direitos e as oportunidades de cada pessoa.</p>
+<div class="piramide">
+<button class="grupo" aria-pressed="false" data-g="0">Patrícios</button>
+<button class="grupo" aria-pressed="false" data-g="1">Plebeus</button>
+<button class="grupo" aria-pressed="false" data-g="2">Pessoas escravizadas</button>
+</div>
+<div class="info" id="grupoInfo" aria-live="polite">Toque em um grupo para saber mais sobre ele.</div>
+</section>
+
+<section id="cultura" class="rev">
+<h2>🏺 Cultura e Arquitetura</h2>
+<p class="dica">Clique nos cartões do Coliseu e dos Aquedutos para virá-los.</p>
+<div class="cards">
+<button class="card flip" aria-pressed="false"><div>
+<section><h3>Coliseu</h3><p>Grande anfiteatro utilizado para espetáculos públicos, incluindo combates de gladiadores.</p></section>
+<section class="verso"><h3>Você sabia?</h3><p>Foi inaugurado em 80 d.C. e podia receber dezenas de milhares de espectadores.</p></section>
+</div></button>
+<button class="card flip" aria-pressed="false"><div>
+<section><h3>Aquedutos</h3><p>Construções utilizadas para transportar água para cidades e regiões do território romano.</p></section>
+<section class="verso"><h3>Você sabia?</h3><p>Muitos funcionavam pela força da gravidade, com uma leve inclinação constante.</p></section>
+</div></button>
+<div class="card"><h3>Religião</h3><p>Os romanos cultuavam vários deuses, como Júpiter, Marte, Vênus e Minerva.</p>
+<div class="chips" id="deuses">
+<button class="chip" aria-pressed="false">Júpiter</button>
+<button class="chip" aria-pressed="false">Marte</button>
+<button class="chip" aria-pressed="false">Vênus</button>
+<button class="chip" aria-pressed="false">Minerva</button>
+</div>
+<p class="saida" id="deusInfo" aria-live="polite"></p></div>
+</div>
+</section>
+
+<section id="legado" class="rev">
+<h2>🏛️ O legado romano</h2>
+<p>Roma deixou importantes influências para o mundo atual, como o Direito Romano, o latim, técnicas de engenharia, arquitetura, estradas e formas de organização política.</p>
+<ul class="legado" style="margin-top:14px" id="lista"></ul>
+</section>
+
+<section class="curiosidade rev">
+<h2>✨ Curiosidade</h2>
+<p>O latim, língua utilizada pelos romanos, deu origem a várias línguas modernas, incluindo o português, espanhol, francês e italiano.</p>
+<p class="dica" style="margin-top:12px;color:#4a3a2e">Escolha uma palavra latina e veja como ela chegou até hoje:</p>
+<div class="chips" id="palavras">
+<button class="chip" aria-pressed="true">aqua</button>
+<button class="chip" aria-pressed="false">luna</button>
+<button class="chip" aria-pressed="false">nox</button>
+<button class="chip" aria-pressed="false">amicus</button>
+</div>
+<div class="palavras" id="resultado"></div>
+</section>
+</main>
+<footer><p>Roma Antiga • História e Cultura</p></footer>
+
+<script>
+// Título: letra por letra
+const t=document.getElementById('titulo'),txt=t.textContent;t.setAttribute('aria-label',txt);t.textContent='';
+[...txt].forEach((c,i)=>{const s=document.createElement('span');s.textContent=c===' '?'\u00A0':c;s.style.animationDelay=(i*.07)+'s';s.setAttribute('aria-hidden','true');t.appendChild(s)});
+
+// Barra de progresso
+const barra=document.getElementById('progresso');
+addEventListener('scroll',()=>{const h=document.documentElement;barra.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+// Revelar seções e marcar menu ativo
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+const links=[...document.querySelectorAll('nav a')];
+const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('ativo',a.hash==='#'+e.target.id))}),{rootMargin:'-40% 0px -55% 0px'});
+document.querySelectorAll('main section[id]').forEach(s=>io2.observe(s));
+
+// Linha do tempo
+const per=[
+{n:'Monarquia',a:'753 a.C. – 509 a.C.',t:'Período inicial de Roma, tradicionalmente iniciado em 753 a.C., quando a cidade era governada por reis.'},
+{n:'República',a:'509 a.C. – 27 a.C.',t:'Começou em 509 a.C. Roma passou a ser administrada por instituições como o Senado.'},
+{n:'Império',a:'27 a.C. – 476 d.C. (Ocidente)',t:'Começou em 27 a.C., com Otávio Augusto. Roma alcançou grande expansão territorial.'}];
+const painel=document.getElementById('painel'),abas=[...document.querySelectorAll('.no')],pre=document.getElementById('preenche');
+function mostra(i){
+abas.forEach((b,k)=>b.setAttribute('aria-selected',k===i));
+pre.style.width=(i*42)+'%';
+painel.classList.remove('troca');void painel.offsetWidth;painel.classList.add('troca');
+painel.innerHTML=`<span class="anos">${per[i].a}</span><h3>${per[i].n}</h3><p>${per[i].t}</p>`}
+abas.forEach((b,i)=>b.addEventListener('click',()=>mostra(+b.dataset.i)));
+mostra(0);
+
+// Grupos sociais
+const gr=[
+'Famílias aristocráticas tradicionais. No início, apenas elas ocupavam os principais cargos políticos e religiosos.',
+'Cidadãos comuns, como camponeses, artesãos e comerciantes. Com o tempo, lutaram por mais direitos e conquistaram representantes, os tribunos da plebe.',
+'Pessoas sem liberdade, muitas vezes capturadas em guerras. Trabalhavam em casas, campos, minas e obras, e não tinham direitos de cidadão.'];
+const gb=[...document.querySelectorAll('.grupo')],gi=document.getElementById('grupoInfo');
+gb.forEach((b,i)=>b.addEventListener('click',()=>{
+gb.forEach(x=>x.setAttribute('aria-pressed',x===b));
+gi.style.opacity=0;setTimeout(()=>{gi.innerHTML=`<strong>${b.textContent}:</strong> ${gr[i]}`;gi.style.opacity=1},200)}));
+
+// Cartões que viram
+document.querySelectorAll('.flip').forEach(c=>c.addEventListener('click',()=>{
+const v=c.classList.toggle('virado');c.setAttribute('aria-pressed',v)}));
+
+// Deuses
+const dz={Júpiter:'Rei dos deuses e deus do céu e do trovão.',Marte:'Deus da guerra, muito venerado pelos soldados.',Vênus:'Deusa do amor e da beleza.',Minerva:'Deusa da sabedoria e das artes.'};
+const db=[...document.querySelectorAll('#deuses .chip')],di=document.getElementById('deusInfo');
+db.forEach(b=>b.addEventListener('click',()=>{db.forEach(x=>x.setAttribute('aria-pressed',x===b));di.textContent=dz[b.textContent]}));
+
+// Legado (sanfona)
+const lg=[
+['⚖️ Direito Romano','Conceitos como contrato, propriedade e cidadania influenciaram muitos sistemas jurídicos atuais.'],
+['🗣️ Latim','Base do português e de outras línguas românicas, além de termos científicos e jurídicos.'],
+['🌉 Engenharia e estradas','Pontes, aquedutos e estradas conectaram o território e facilitaram o comércio e a comunicação.'],
+['🏛️ Arquitetura e política','Arcos, abóbadas, o uso do concreto e ideias como Senado e república seguem presentes no mundo moderno.']];
+const ul=document.getElementById('lista');
+lg.forEach(([h,p])=>{const li=document.createElement('li');
+li.innerHTML=`<button aria-expanded="false">${h}</button><div class="txt"><p>${p}</p></div>`;
+const b=li.querySelector('button'),d=li.querySelector('.txt');
+b.addEventListener('click',()=>{const o=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',!o);d.style.maxHeight=o?0:d.scrollHeight+'px'});
+ul.appendChild(li)});
+
+// Latim → línguas modernas
+const pl={aqua:['água','agua','eau','acqua'],luna:['lua','luna','lune','luna'],nox:['noite','noche','nuit','notte'],amicus:['amigo','amigo','ami','amico']};
+const nomes=['Português','Espanhol','Francês','Italiano'],res=document.getElementById('resultado'),pb=[...document.querySelectorAll('#palavras .chip')];
+function palavra(w){res.innerHTML=pl[w].map((x,i)=>`<div class="lang" style="animation-delay:${i*.1}s"><small>${nomes[i]}</small><strong>${x}</strong></div>`).join('')}
+pb.forEach(b=>b.addEventListener('click',()=>{pb.forEach(x=>x.setAttribute('aria-pressed',x===b));palavra(b.textContent)}));
+palavra('aqua');
+</script>
+</body>
+</html>
